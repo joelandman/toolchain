@@ -1,0 +1,29 @@
+include Makefile.conf
+
+#### Octave  
+OCTAVEVER		= 3.8.2
+OCTAVE			= octave-${OCTAVEVER}
+OCTAVE_INST_PATH	= ${SICE_INST_PATH}
+OSREV			= `uname -r`
+OCTAVEOPTS		= --enable-64 --enable-openmp --enable-jit --enable-atomic-refcount --with-x 
+#--------------------------------------------------------------------------#
+
+all:    	install-octave-modules
+
+clean:		clean-octave  
+
+config-octave:	
+	tar -zxvf sources/${OCTAVE}.tar.gz
+	cd ${OCTAVE} ; CFLAGS="-mtune=native  "   ./configure --prefix=${SICE_INST_PATH} ${OCTAVEOPTS}
+	touch config-octave
+
+make-octave: config-octave
+	cd ${OCTAVE} ;	 make -j8
+	touch make-octave
+
+install-octave: make-octave
+	cd ${OCTAVE} ; make install
+	touch install-octave
+
+clean-octave:
+	rm -rf ${OCTAVE} make-octave config-octave install-octave make-octave

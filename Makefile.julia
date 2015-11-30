@@ -1,0 +1,33 @@
+include Makefile.conf
+
+JULIA_INST_PATH	= ${SICE_INST_PATH}
+
+
+
+
+
+all:    	install-julia
+
+clean:		clean-julia  
+
+config-julia:	
+	git clone git://github.com/JuliaLang/julia.git
+	#echo "DESTDIR=${JULIA_INST_PATH}" >> julia/Make.user
+	touch config-julia
+
+make-julia: config-julia
+	rm -f julia/Make.user
+	#echo "USE_SYSTEM_PCRE=1" > julia/Make.user
+	#echo "USE_SYSTEM_BLAS=1" >> julia/Make.user
+	#echo "USE_SYSTEM_LAPACK=1" >> julia/Make.user
+	cd julia ; make  -j4
+	touch make-julia
+
+install-julia: make-julia
+	cd julia ;  make install
+	cd julia/usr ; tar -cf - . | (cd ${JULIA_INST_PATH} && tar -xvf - )
+	#ln -s ${JULIA_INST_PATH}/bin/julia-debug-readline ${JULIA_INST_PATH}/bin/julia
+	touch install-julia
+
+clean-julia:
+	rm -rf julia install-julia make-julia config-julia

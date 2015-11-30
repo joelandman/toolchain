@@ -1,0 +1,15 @@
+[global]
+directory=/data/1/test
+lockfile=readwrite
+ioengine=libaio
+iodepth=32
+rw=randrw
+numjobs=8
+
+[file]
+filesize=16-8k/8M-512M
+blocksize_range=64k-1M
+size=1G
+nrfiles=50
+openfiles=8
+runtime=900

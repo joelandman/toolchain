@@ -1,0 +1,42 @@
+include Makefile.conf
+
+#### Perl  
+PYTHONVER		= 3.5.0
+PYTHON			= Python-${PYTHONVER}
+PYTHON_INST_PATH	= ${SICE_INST_PATH}
+OSREV			= `uname -r`
+#--------------------------------------------------------------------------#
+
+all:    	install-python-modules
+
+clean:		clean-python  
+
+config-python:	
+	tar -zxvf sources/${PYTHON}.tgz
+	cd ${PYTHON} ; CFLAGS="-mtune=corei7  "   ./configure --prefix=${SICE_INST_PATH}
+	touch config-python
+
+make-python: config-python
+	cd ${PYTHON} ;	 make -j4
+	touch make-python
+
+install-python: make-python
+	cd ${PYTHON} ; make install
+	touch install-python
+
+install-python-modules: install-python
+	# now install ipython, numpy, scipy and others
+	#${SICE_INST_PATH}/bin/pip3 install ipython
+	${SICE_INST_PATH}/bin/pip3 install jupyter
+	${SICE_INST_PATH}/bin/pip3 install numpy
+	${SICE_INST_PATH}/bin/pip3 install nose
+	#${SICE_INST_PATH}/bin/pip3 install dateutil 
+	${SICE_INST_PATH}/bin/pip3 install pyzmq tornado
+	${SICE_INST_PATH}/bin/pip3 install matplotlib
+	${SICE_INST_PATH}/bin/pip3 install pandas
+	${SICE_INST_PATH}/bin/pip3 install sympy
+	${SICE_INST_PATH}/bin/pip3 install scipy
+	touch install-python-modules
+
+clean-python:
+	rm -rf ${PYTHON} make-python config-python install-python install-python-modules python
